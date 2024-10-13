@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .signalture {
+        width: 600px;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #000;
+      }
+
+      #canvas {
+        width: 100%;
+        aspect-ratio: 4/3;
+        display: block;
+        border: 1px solid #000;
+      }
+
+      .btn {
+        padding: 8px 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="signalture">
+      <canvas id="canvas"></canvas>
+      <div class="options">
+        <button class="clear btn">clear</button>
+      </div>
+    </div>
+  </body>
+  <script>
+    const clearBtn = document.querySelector('.clear');
+    const canvas = document.querySelector('#canvas');
+    const ctx = canvas.getContext('2d');
+
+    let painting = false;
+    let prePos = null;
+    let radius = 5;
+    let smoothFactor = 3;
+
+    const lerp = (x, y, a) => x * (1 - a) + y * a;
+
+    const handleMove = (x, y, movementX, movementY) => {
+      const distance = Math.sqrt(movementX * movementX + movementY * movementY);
+      const speed = Math.max(2, Math.min(distance / smoothFactor, 20));
+
+      if (prePos != null) {
+        const { x: prevX, y: prevY } = prePos;
+        for (let i = 0; i < speed; i++) {
+          const targetX = lerp(prevX, x, (1 / speed) * i);
+          const targetY = lerp(prevY, y, (1 / speed) * i);
+          drawCircle(targetX, targetY, radius);
+        }
+      }
+      prePos = { x, y };
+    };
+
+    const drawCircle = (x, y, r) => {
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, 2 * Math.PI);
+      ctx.fill();
+    };
+
+    const onMouseMove = (e) => {
+      const { clientX, clientY, movementX, movementY } = e;
+
+      // 获取 canvas 的边界框
+      const rect = canvas.getBoundingClientRect();
+
+      // 转换为相对于 canvas 的坐标
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+
+      handleMove(x, y, movementX, movementY);
+    };
+
+    const onTouchMove = (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+
+      // 获取 canvas 的边界框
+      const rect = canvas.getBoundingClientRect();
+
+      // 转换为相对于 canvas 的坐标
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+
+      // 计算移动量
+      const movementX = x - (prePos ? prePos.x : x);
+      const movementY = y - (prePos ? prePos.y : y);
+
+      handleMove(x, y, movementX, movementY);
+    };
+
+    const initCanvas = () => {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    };
+
+    initCanvas();
+
+    document.addEventListener('mousedown', () => {
+      painting = true;
+    });
+
+    document.addEventListener('mouseup', () => {
+      prePos = null;
+      painting = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      prePos = null;
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      onTouchMove(e);
+    });
+
+    canvas.addEventListener('touchend', (e) => {
+      prePos = null;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (painting) {
+        onMouseMove(e);
+      }
+    });
+
+    clearBtn.onclick = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
+  </script>
+</html>

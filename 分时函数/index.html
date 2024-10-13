@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button class="btn">开始</button>
+  </body>
+  <script>
+    // 加载大量数据不卡顿
+    const btn = document.querySelector('.btn');
+    const datas = new Array(100000).fill(0).map((_, i) => i);
+    btn.onclick = () => {
+      const taskHandler = (_, i) => {
+        const div = document.createElement('div');
+        div.innerText = i;
+        document.body.appendChild(div);
+      };
+
+      const scheduler = (task) => {
+        setTimeout(() => {
+          const now = performance.now();
+          task(() => {
+            return performance.now() - now <= 10;
+          });
+        }, 1000);
+      };
+      browserPerformChunk(datas, taskHandler);
+    };
+
+    function performChunk(datas, taskHandler, scheduler) {
+      if (typeof datas === 'number') {
+        datas = {
+          length: datas,
+        };
+      }
+
+      if (datas.length === 0) return;
+
+      let i = 0;
+      // 开启下一个分片的执行
+      function _run() {
+        if (i >= datas.length) return;
+        // 一个渲染帧中，空闲时开启分片执行
+        scheduler((goOn) => {
+          while (goOn() & (i < datas.length)) {
+            taskHandler(datas[i], i);
+            i++;
+          }
+          // 次此分片完成
+          _run();
+        });
+      }
+      _run();
+    }
+
+    function browserPerformChunk(datas, taskHandler) {
+      const scheduler = (task) => {
+        requestIdleCallback((idel) => {
+          task(() => idel.timeRemaining());
+        });
+      };
+      performChunk(datas, taskHandler, scheduler);
+    }
+  </script>
+</html>

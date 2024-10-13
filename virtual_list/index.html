@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virtual List</title>
+    <style>
+      .virtuallist-container {
+        position: relative;
+        width: 500px;
+        height: 500px;
+        overflow-y: auto;
+        margin: 0 auto;
+        border: 1px solid #ccc;
+      }
+
+      .phantom {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+      }
+
+      .list-item {
+        position: absolute;
+        width: 100%;
+        box-sizing: border-box;
+        border-bottom: 1px solid #eee;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="virtuallist-container" id="virtuallist-container"></div>
+    <script src="./virtualList.js"></script>
+  </body>
+</html>

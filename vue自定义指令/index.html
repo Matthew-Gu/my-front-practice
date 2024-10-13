@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/reset-css/reset.css" />
+    <style>
+      #app {
+        overflow: hidden;
+      }
+      nav {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 60px;
+        background: skyblue;
+        z-index: 10;
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+      }
+      .cusion {
+        height: 60px;
+      }
+      .container {
+        width: 600px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+
+      .box {
+        width: 100%;
+        height: 400px;
+        background: salmon;
+        margin-bottom: 30px;
+        display: grid;
+        place-items: center;
+        font-size: 64px;
+        font-family: bold;
+        border-radius: 8px;
+        box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.3);
+      }
+      .box:last-child {
+        margin-bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 优化加载显示视图 -->
+      <template v-if="true">
+        <nav></nav>
+        <div class="cusion"></div>
+        <div class="container">
+          <div class="box" v-slide-in="{distance:'50%',duration:1000}" v-for="item in 10">
+            {{item}}
+          </div>
+        </div>
+      </template>
+    </div>
+  </body>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp, ref, reactive } = Vue;
+
+    const app = createApp({
+      setup() {
+        const animationMap = new WeakMap();
+        const ob = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const animation = animationMap.get(entry.target);
+              animation.play();
+              ob.unobserve(entry.target);
+            }
+          });
+        });
+        app.directive('slide-in', {
+          mounted(el, binding) {
+            const { distance = '30%', duration = 1000 } = binding.value;
+            const animation = el.animate(
+              [
+                {
+                  transform: `translateY(${distance})`,
+                  opacity: 0,
+                },
+                {
+                  transform: `translateY(0)`,
+                  opacity: 1,
+                },
+              ],
+              { duration: duration, easing: 'ease' }
+            );
+            animation.pause();
+            animationMap.set(el, animation);
+            ob.observe(el);
+          },
+          unmounted(el) {
+            ob.unobserve(el);
+          },
+        });
+
+        return {};
+      },
+    });
+
+    app.mount('#app');
+  </script>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>index1</title>
+  </head>
+  <body>
+    <a href="./index2.html" target="_blank">跳转到index2</a>
+  </body>
+  <script src="./storage.js"></script>
+  <script>
+    // 设置storage，到index2查看
+    sendMsg('add-temp', {
+      name: '张三',
+      age: 25,
+    });
+  </script>
+</html>

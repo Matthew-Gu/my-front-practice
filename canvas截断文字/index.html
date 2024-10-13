@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="500" height="500"></canvas>
+  </body>
+  <script>
+    // 截断文字
+    function fillTruncateText({ ctx, text, x, y, maxWidth, font, fillStyle }) {
+      ctx.font = font;
+      ctx.fillStyle = fillStyle;
+      const textWidth = ctx.measureText(text).width;
+      if (textWidth <= maxWidth) {
+        ctx.fillText(text, x, y);
+        return;
+      }
+      let len = text.length;
+      let sliceText = text;
+      let width = textWidth;
+      while (width > maxWidth && len > 0) {
+        len -= 1;
+        sliceText = text.slice(0, len);
+        width = ctx.measureText(sliceText).width;
+      }
+      ctx.fillText(sliceText, x, y);
+    }
+    // 一行文字超出显示省略号
+    function fillEllipsisText({ ctx, text, x, y, maxWidth, font, fillStyle }) {
+      ctx.font = font;
+      ctx.fillStyle = fillStyle;
+      const ellipsis = '...';
+      const ellipsisWidth = ctx.measureText(ellipsis).width;
+      const textWidth = ctx.measureText(text).width;
+      if (ellipsisWidth + textWidth <= maxWidth) {
+        ctx.fillText(text, x, y);
+        return;
+      }
+      let len = text.length;
+      let sliceText = text;
+      let width = textWidth;
+      while (width + ellipsisWidth > maxWidth && len > 0) {
+        len -= 1;
+        sliceText = text.slice(0, len);
+        width = ctx.measureText(sliceText).width;
+      }
+      ctx.fillText(`${sliceText}${ellipsis}`, x, y);
+    }
+    // 文字超出换行
+    function fillWrapText({ ctx, text, x, y, maxWidth, lineHeight, font, fillStyle }) {
+      ctx.font = font;
+      ctx.fillStyle = fillStyle;
+      const arrText = text.split('');
+      let line = '';
+
+      for (let i = 0; i < arrText.length; i++) {
+        let testLine = line + arrText[i];
+        let testWidth = ctx.measureText(testLine).width;
+        if (testWidth > maxWidth) {
+          ctx.fillText(line, x, y);
+          line = arrText[i];
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, y);
+    }
+    // 多行文字超出显示省略号
+    function fillMultilineEllipsisText({
+      ctx,
+      text,
+      x,
+      y,
+      maxWidth,
+      maxLines,
+      lineHeight,
+      font,
+      fillStyle,
+    }) {
+      ctx.font = font;
+      ctx.fillStyle = fillStyle;
+      const ellipsis = '...';
+      const ellipsisWidth = ctx.measureText(ellipsis).width;
+
+      const arrText = text.split('');
+      let line = '';
+      let lines = 0;
+
+      for (let i = 0; i < arrText.length; i++) {
+        const testLine = line + arrText[i];
+        const testWidth = ctx.measureText(testLine).width;
+
+        if (testWidth > maxWidth) {
+          lines++;
+          if (lines >= maxLines) {
+            const testEllipsisLine = line + ellipsis;
+            if (ctx.measureText(testEllipsisLine).width > maxWidth) {
+              while (ctx.measureText(line + ellipsis).width > maxWidth) {
+                line = line.slice(0, -1);
+              }
+              ctx.fillText(`${line}${ellipsis}`, x, y);
+            } else {
+              ctx.fillText(line, x, y);
+            }
+            return;
+          } else {
+            // 正常换行
+            ctx.fillText(line, x, y);
+            line = arrText[i];
+            y += lineHeight;
+          }
+        } else {
+          line = testLine;
+        }
+      }
+
+      if (line) {
+        lines++;
+        if (lines >= maxLines) {
+          const testEllipsisLine = line + ellipsis;
+          if (ctx.measureText(testEllipsisLine).width > maxWidth) {
+            while (ctx.measureText(line + ellipsis).width > maxWidth) {
+              line = line.slice(0, -1);
+            }
+            ctx.fillText(line + ellipsis, x, y);
+          } else {
+            ctx.fillText(line, x, y);
+          }
+        } else {
+          ctx.fillText(line, x, y);
+        }
+      }
+    }
+
+    /** @type {HTMLCanvasElement} */
+    const canvas = document.querySelector('#canvas');
+    const ctx = canvas.getContext('2d');
+
+    fillTruncateText({
+      ctx,
+      text: '山不在高，有仙则名。水不在深，有龙则灵。斯是陋室，惟吾德馨。苔痕上阶绿，草色入帘青。谈笑有鸿儒，往来无白丁。可以调素琴，阅金经。无丝竹之乱耳，无案牍之劳形。南阳诸葛庐，西蜀子云亭。孔子云：“何陋之有？”',
+      x: 0,
+      y: 20,
+      maxWidth: 300,
+      font: '16px Arial',
+      fillStyle: '#222426',
+    });
+
+    fillEllipsisText({
+      ctx,
+      text: '山不在高，有仙则名。水不在深，有龙则灵。斯是陋室，惟吾德馨。苔痕上阶绿，草色入帘青。谈笑有鸿儒，往来无白丁。可以调素琴，阅金经。无丝竹之乱耳，无案牍之劳形。南阳诸葛庐，西蜀子云亭。孔子云：“何陋之有？”',
+      x: 0,
+      y: 60,
+      maxWidth: 300,
+      font: '16px Arial',
+      fillStyle: '#222426',
+    });
+
+    fillWrapText({
+      ctx,
+      text: '山不在高，有仙则名。水不在深，有龙则灵。斯是陋室，惟吾德馨。苔痕上阶绿，草色入帘青。谈笑有鸿儒，往来无白丁。可以调素琴，阅金经。无丝竹之乱耳，无案牍之劳形。南阳诸葛庐，西蜀子云亭。孔子云：“何陋之有？”',
+      x: 0,
+      y: 100,
+      maxWidth: 300,
+      lineHeight: 20,
+      font: '16px Arial',
+      fillStyle: '#222426',
+    });
+
+    fillMultilineEllipsisText({
+      ctx,
+      text: '山不在高，有仙则名。水不在深，有龙则灵。斯是陋室，惟吾德馨。苔痕上阶绿，草色入帘青。谈笑有鸿儒，往来无白丁。可以调素琴，阅金经。无丝竹之乱耳，无案牍之劳形。南阳诸葛庐，西蜀子云亭。孔子云：“何陋之有？”',
+      x: 0,
+      y: 240,
+      maxWidth: 300,
+      maxLines: 5,
+      lineHeight: 20,
+      font: '16px Arial',
+      fillStyle: '#222426',
+    });
+  </script>
+</html>

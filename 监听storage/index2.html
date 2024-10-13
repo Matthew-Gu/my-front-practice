@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>index2</title>
+  </head>
+  <body>
+    <a href="./index1.html" target="_blank">跳转到index1</a>
+  </body>
+  <script src="./storage.js"></script>
+  <script>
+    // 监听storage
+    let useHandle;
+
+    useHandle = listenMsg((type, payload) => {
+      console.log(type, payload);
+    });
+
+    // useHandle && useHandle();
+  </script>
+</html>

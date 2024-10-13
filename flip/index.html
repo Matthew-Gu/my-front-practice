@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
+      .test {
+        padding: 0.5em;
+        border-radius: 0.5em;
+        background: lightblue;
+      }
+
+      .item {
+        padding: 0.5em;
+        border-radius: 0.5em;
+        background-color: lightcoral;
+        margin: 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="test" onclick="move()">change</button>
+    <div class="list">
+      <div class="item">1</div>
+      <div class="item">2</div>
+      <div class="item">3</div>
+      <div class="item">4</div>
+      <div class="item">5</div>
+    </div>
+  </body>
+  <script>
+    class FLIP {
+      constructor(list, duration = 0.5) {
+        this.duration = duration;
+        this.list = [...list];
+        this.positionMap = new WeakMap();
+        this.updatePositions();
+      }
+
+      updatePositions() {
+        this.list.forEach((item) => {
+          const { x, y } = item.getBoundingClientRect();
+          this.positionMap.set(item, [x, y]);
+        });
+      }
+
+      play() {
+        this.list.forEach((item, index) => {
+          const position = this.positionMap.get(item);
+          if (!position) return;
+          const [startX = 0, startY = 0] = position;
+          const { x: endX, y: endY } = item.getBoundingClientRect();
+
+          const deltaX = startX - endX;
+          const deltaY = startY - endY;
+
+          item.animate([{ transform: `translate(${deltaX}px, ${deltaY}px)` }, { transform: 'none' }], {
+            duration: this.duration * 1000,
+            easing: 'ease-in-out',
+            fill: 'both',
+          });
+
+          this.positionMap.set(item, [endX, endY]);
+        });
+      }
+    }
+
+    const list = document.querySelector('.list');
+    const flip = new FLIP(list.children, 0.5);
+
+    function shuffle(array) {
+      let shuffledArray = array.slice(); // 创建数组的副本
+      for (let i = shuffledArray.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1)); // 生成随机索引
+        [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]]; // 交换元素
+      }
+      return shuffledArray;
+    }
+
+    function move() {
+      flip.updatePositions();
+      const children = shuffle(Array.from(list.children));
+      children.forEach((child) => list.appendChild(child));
+      flip.play();
+    }
+  </script>
+</html>

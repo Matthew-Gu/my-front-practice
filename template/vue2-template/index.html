@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="
+https://cdn.jsdelivr.net/npm/ant-design-vue@4.1.2/dist/reset.min.css
+"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ant-design-vue@1.7.7/dist/antd.min.css"
+    />
+    <link rel="stylesheet" href="./assets/css/main.css" />
+  </head>
+  <body>
+    <div id="app">
+      <a-range-picker v-model="time" style="width: 254px"></a-range-picker>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/locale/zh-cn.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ant-design-vue@1.7.7/dist/antd.min.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        time: [],
+      },
+      mounted() {
+        const startTime = moment().startOf('week');
+        const endTime = moment().endOf('week');
+        this.time = [startTime, endTime];
+      },
+      methods: {},
+    });
+  </script>
+</html>

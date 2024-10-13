@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+      }
+
+      img {
+        width: 100%;
+        display: block;
+      }
+
+      #container {
+        position: relative;
+        width: 500px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+
+      #container:hover #magnifier {
+        display: block;
+      }
+
+      #magnifier {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 150px;
+        height: 150px;
+        border: 5px solid #fff;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+
+      #magnifier img {
+        width: 800px;
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <img
+        id="mainImg"
+        src="https://picsum.photos/seed/picsum/1920/1080"
+        alt=""
+      />
+      <div id="magnifier">
+        <img src="https://picsum.photos/seed/picsum/1920/1080" alt="" />
+      </div>
+    </div>
+  </body>
+  <script>
+    let container = document.querySelector('#container');
+    let magnifier = document.querySelector('#magnifier');
+    let magnifierImg = magnifier.querySelector('img');
+    let img = container.querySelector('#mainImg');
+
+    let scale = 5; // 放大倍数
+
+    magnifierImg.style.width = img.offsetWidth * scale + 'px';
+
+    container.addEventListener('mousemove', (e) => {
+      let { clientX, clientY } = e;
+      let { left, top, width, height } = container.getBoundingClientRect();
+      let { width: magnifierWidth, height: magnifierHeight } =
+        magnifier.getBoundingClientRect();
+
+      let x = clientX - left - magnifierWidth / 2;
+      let y = clientY - top - magnifierHeight / 2;
+
+      //   // 限制放大镜不能超出图片边界
+      //   x = Math.max(0, Math.min(x, width - magnifierWidth));
+      //   y = Math.max(0, Math.min(y, height - magnifierHeight));
+
+      magnifier.style.left = x + 'px';
+      magnifier.style.top = y + 'px';
+
+      // 计算放大镜中图片的位置
+      let imgX = -((clientX - left) * scale - magnifierWidth / 2);
+      let imgY = -((clientY - top) * scale - magnifierHeight / 2);
+
+      magnifierImg.style.left = imgX + 'px';
+      magnifierImg.style.top = imgY + 'px';
+    });
+  </script>
+</html>

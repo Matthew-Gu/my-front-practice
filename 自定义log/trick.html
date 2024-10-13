@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>按F12查看控制台log</h1>
+  </body>
+  <script>
+    class defineLog {
+      processContents(contents) {
+        return (
+          contents.reduce((pre, cur) => {
+            return pre + `%c${cur}`;
+          }, '') || ''
+        );
+      }
+
+      transStyleToString(style) {
+        if (!style || !Object.keys(style).length) {
+          return '';
+        }
+        const convertedStyle = [];
+        for (const [key, value] of Object.entries(style)) {
+          if (typeof value == 'string' || typeof value === 'number') {
+            const convertedKey = key.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
+            convertedStyle.push(`${convertedKey}: ${value}`);
+          } else {
+            throw new Error('样式对象的值必须是字符串或者数字');
+          }
+        }
+        return convertedStyle.join('; ');
+      }
+
+      createStyle = (config = []) => {
+        try {
+          const contentArr = [];
+          const styles = config?.length
+            ? config.map((item) => {
+                const { content, ...rest } = item || {};
+                contentArr.push(content);
+                return this.transStyleToString(rest);
+              })
+            : [];
+          return [this.processContents(contentArr), ...styles];
+        } catch (error) {
+          console.error('error', error);
+          return [];
+        }
+      };
+    }
+
+    const logger = new defineLog();
+    const _log = logger.createStyle;
+    const obj = { name: 'John', age: 30 };
+    console.log(
+      ..._log([
+        {
+          content: '土豪金',
+          display: 'inline-block',
+          outline: 'none',
+          padding: '0.2em 1em',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '1em',
+          fontWeight: '900',
+          textShadow: '0 2px 2px rgba(250, 227, 133, 1)',
+          border: '2px solid rgba(204, 160, 81, 1)',
+          borderRadius: '0.3em',
+          backgroundImage: 'linear-gradient(160deg, #a54e07, #b47e11, #fef1a2, #bc881b, #a54e07)',
+          color: 'rgba(120, 50, 5)',
+        },
+      ]),
+      obj
+    );
+
+    console.log(
+      ..._log([
+        {
+          content: '条纹按钮',
+          display: 'inline-block',
+          outline: 'none',
+          padding: '0.2em 1em',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '1em',
+          fontWeight: '900',
+          borderRadius: '0.3em',
+          backgroundImage:
+            'repeating-linear-gradient(45deg,rgb(255, 209, 124),rgb(255, 209, 124) 6px,rgb(255, 139, 97) 6px,rgb(255, 139, 97) 12px)',
+          color: '#000',
+        },
+      ]),
+      obj
+    );
+  </script>
+</html>

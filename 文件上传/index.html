@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./style/upload.css" />
+  </head>
+  <body>
+    <div class="upload select">
+      <div class="upload-select">
+        <input type="file" />
+      </div>
+      <div class="upload-progress">
+        <div class="progress-bar">
+          <button>取消</button>
+        </div>
+      </div>
+      <div class="upload-result">
+        <button>X</button>
+      </div>
+      <img src="" alt="" class="preview" />
+    </div>
+  </body>
+  <script>
+    const $ = document.querySelector.bind(document);
+    const doms = {
+      img: $('.preview'),
+      container: $('.upload'),
+      select: $('.upload-select'),
+      selectFile: $('.upload-select input'),
+      progress: $('.upload-progress'),
+      cancelBtn: $('.upload-progress button'),
+      delBtn: $('.upload-result button'),
+    };
+
+    function showArea(areaName) {
+      doms.container.className = `upload ${areaName}`;
+    }
+
+    function setProgress(value) {
+      doms.progress.style.setProperty('--percent', value);
+    }
+
+    doms.select.onclick = function () {
+      doms.selectFile.click();
+    };
+
+    let cancelUpload = null;
+    function cancel() {
+      cancelUpload && cancelUpload();
+      showArea('select');
+      doms.selectFile.value = null;
+      doms.progress.style.setProperty('--percent', 0);
+      doms.img.src = '';
+    }
+
+    doms.selectFile.onchange = function () {
+      if (this.files.length === 0) return;
+
+      const file = this.files[0];
+      if (!validateFile(file)) {
+        return;
+      }
+      // 切换场景
+      showArea('progress');
+      // 显示预览
+      const reader = new FileReader();
+      reader.onload = function () {
+        doms.img.src = this.result;
+      };
+      reader.readAsDataURL(file);
+      // 上传
+      cancelUpload = upload(
+        file,
+        function (val) {
+          // 进度变化了
+          setProgress(val);
+        },
+        function (resp) {
+          // 上传完成
+          showArea('result');
+        }
+      );
+    };
+
+    function upload(file, onProgress, onFinish) {
+      let p = 0;
+      onProgress(p);
+      const timerId = setInterval(() => {
+        p++;
+        onProgress(p);
+        if (p === 100) {
+          onFinish('服务器响应结果');
+          clearInterval(timerId);
+        }
+      }, 50);
+      return function () {
+        // 取消上传
+        clearInterval(timerId);
+      };
+    }
+
+    function validateFile(file) {
+      const sizeLimit = 10 * 1024 * 1024;
+      const legalExts = ['.jpg', '.jpeg', '.png', '.bmp', '.webp', '.gif'];
+      if (file.size > sizeLimit) {
+        alert('文件大小超过限制');
+        return false;
+      }
+      const fileName = file.name.toLowerCase();
+      if (!legalExts.some((ext) => fileName.endsWith(ext))) {
+        alert('文件格式不合法');
+        return false;
+      }
+      return true;
+    }
+
+    doms.cancelBtn.onclick = doms.delBtn.onclick = cancel;
+  </script>
+</html>

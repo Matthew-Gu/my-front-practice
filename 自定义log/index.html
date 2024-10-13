@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>按F12查看控制台log</h1>
+  </body>
+  <script>
+    function defineLog() {
+      const isEmpty = (value) => value == null || value === '' || value === undefined;
+
+      const createStyle = (color, hasText) => {
+        if (hasText) {
+          return [
+            `display: inline-block;background:${color};border:1px solid ${color}; padding: 1px 3px; border-radius: 2px 0 0 2px; color: #fff;`,
+            `border:1px solid ${color}; padding: 1px 6px; border-radius: 0 2px 2px 0; color: ${color};`,
+          ];
+        }
+        return [
+          `display: inline-block;background:${color};border:1px solid ${color}; padding: 1px 3px; border-radius: 2px; color: #fff;`,
+        ];
+      };
+
+      const print = (title, text, color) => {
+        const styles = createStyle(color, !isEmpty(text));
+        return !isEmpty(text) ? [`%c${title}%c${text}`, ...styles] : [`%c${title}`, ...styles];
+      };
+
+      const createLogMethod = (defaultTitle, color) => (title, text) => {
+        if (isEmpty(text)) {
+          return print(title || defaultTitle, '', color);
+        } else {
+          return print(title, text, color);
+        }
+      };
+
+      const info = createLogMethod('Info', '#909399');
+      const warning = createLogMethod('Warning', '#E6A23C');
+      const error = createLogMethod('Error', '#F56C6C');
+      const success = createLogMethod('Success', '#67C23A');
+
+      return {
+        info,
+        warning,
+        error,
+        success,
+      };
+    }
+
+    // 使用示例
+    const log = defineLog();
+    const obj = { name: 'John', age: 30 };
+    console.log(...log.info('提示'), obj);
+    console.log(...log.info('提示', '这是一个普通提示'), obj);
+    console.log(...log.warning('警告'), obj);
+    console.log(...log.warning('警告', '这是一个警告提示'), obj);
+    console.log(...log.error('错误'), obj);
+    console.log(...log.error('错误', '这是一个错误提示'), obj);
+    console.log(...log.success('成功'), obj);
+    console.log(...log.success('成功', '这是一个成功提示'), obj);
+
+    // console.log(
+    //   '%c123%c666%o777%O888',
+    //   'color:#f00;font-size:60px;',
+    //   'color:#ff0',
+    //   obj,
+    //   obj
+    // );
+  </script>
+</html>

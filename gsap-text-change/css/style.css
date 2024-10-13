@@ -1,0 +1,84 @@
+@import url('https://fonts.cdnfonts.com/css/graphik-trial');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Graphik Trial', sans-serif;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+
+.page {
+    position: relative;
+}
+
+.box {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.box .background-video {
+    width: 100%;
+    height: 100%;
+}
+
+.box .background-video .video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.box .wrapper {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.wrapper .text1,
+.wrapper .text2 {
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    text-align: center;
+}
+
+.text1 h1 {
+    font-size: 64px;
+    font-weight: 600;
+}
+
+.text2 p {
+    font-size: 50px;
+    font-weight: 500;
+    max-width: 20em;
+}
+
+.box2 {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #246ca8;
+}
+
+@media screen and (max-width:750px) {
+
+    .wrapper .text1,
+    .wrapper .text2 {
+        font-size: 4vw;
+    }
+}

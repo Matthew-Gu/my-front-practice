@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue3 Template</title>
+    <link rel="stylesheet" href="https://unpkg.com/reset-css/reset.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <script type="text/javascript" src="./js/vue.global.min.js"></script>
+    <script type="text/javascript" src="./js/vue-styled-components.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <transition-group name="list" tag="ul">
+        <li v-for="item in list" :key="item.id">{{ item }}</li>
+      </transition-group>
+      <button @click="suiji()">随机</button>
+      <button @click="toLast()">到最后</button>
+      <button @click="toFirst()">到最前</button>
+      <button @click="jiangxu()">降序</button>
+      <button @click="shengxu()">升序</button>
+    </div>
+  </body>
+  <script src="./components/dialog/dialog.js"></script>
+  <script src="./components/toast/toast.js"></script>
+  <script type="text/javascript" src="./js/script.js"></script>
+</html>

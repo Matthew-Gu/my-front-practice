@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .tooltip {
+        position: absolute;
+        background-color: #333;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+    </style>
+    <title>Tooltip Animation</title>
+  </head>
+  <body>
+    <button id="tooltipBtn">Hover over me</button>
+    <div id="tooltip" class="tooltip">This is a tooltip</div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const button = document.getElementById('tooltipBtn');
+        const tooltip = document.getElementById('tooltip');
+
+        const showTooltip = () => {
+          tooltip.style.opacity = 1;
+          tooltip.style.display = 'block';
+          tooltip.animate(
+            [
+              { transform: `translateY(${tooltip.offsetHeight / 2}px)`, opacity: 0 },
+              { transform: 'translateY(0)', opacity: 1 },
+            ],
+            {
+              duration: 300,
+              easing: 'ease-in-out',
+              fill: 'forwards',
+            }
+          );
+        };
+
+        const hideTooltip = () => {
+          tooltip.animate(
+            [
+              { transform: 'translateY(0)', opacity: 1 },
+              { transform: `translateY(${tooltip.offsetHeight / 2}px)`, opacity: 0 },
+            ],
+            {
+              duration: 300,
+              easing: 'ease-in-out',
+              fill: 'forwards',
+            }
+          ).onfinish = () => {
+            tooltip.style.display = 'none';
+          };
+        };
+
+        button.addEventListener('mouseenter', showTooltip);
+        button.addEventListener('mouseleave', hideTooltip);
+      });
+    </script>
+  </body>
+</html>

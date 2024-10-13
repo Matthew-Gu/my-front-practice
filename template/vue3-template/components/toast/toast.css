@@ -1,0 +1,27 @@
+#toast-container {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  font-family: HarmonyOS_Regular;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+#toast-container .toast {
+  position: fixed;
+  width: fit-content;
+  left: 1em;
+  right: 1em;
+  margin: 0 auto;
+  padding: 0.4em 0.8em;
+  font-size: 36rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 0.4em;
+  user-select: none;
+}

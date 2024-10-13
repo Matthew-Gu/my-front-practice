@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: #101010;
+        padding: 3rem 1rem;
+        background: #edf4ff;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      h2 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-block-end: 0.5em;
+      }
+
+      p:not(:last-child) {
+        margin-block-end: 1em;
+      }
+
+      .tab-container {
+        width: 80vw;
+        max-width: 600px;
+        padding: 1rem;
+        border-radius: 1rem;
+        background: #fff;
+        box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.025);
+        margin: 2rem auto;
+      }
+
+      .tabs {
+        --active: 0;
+        --tab-count: 3;
+        isolation: isolate;
+        position: relative;
+        display: flex;
+        height: 3.5rem;
+        border-block-end: 1px solid #e9ebec;
+      }
+
+      .tabs input {
+        display: none;
+      }
+
+      .tabs label {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: #656d7b;
+        cursor: pointer;
+        transition: color 0.3s ease-in-out;
+      }
+
+      .tabs label:has(input:checked) {
+        color: #101010;
+      }
+
+      .tabs::after {
+        content: '';
+        position: absolute;
+        pointer-events: none;
+        inset: 0 0 -1px;
+        width: calc((100% / var(--tab-count)) - 2px);
+        border-radius: 0.5rem 0.5rem 0 0;
+        border: 1px solid #e9ebec;
+        border-block-end: none;
+        background-image: linear-gradient(#edf4ff, #fff);
+        z-index: -1;
+
+        translate: calc(var(--active) * 100%);
+        transition: translate 0.3s ease-in-out;
+      }
+
+      .tabs:has(label:nth-of-type(1) input:checked) {
+        --active: 0;
+      }
+      .tabs:has(label:nth-of-type(2) input:checked) {
+        --active: 1;
+      }
+      .tabs:has(label:nth-of-type(3) input:checked) {
+        --active: 2;
+      }
+
+      .tab-content {
+        display: none;
+        padding: 1rem;
+      }
+      .tab-container:has(label:nth-of-type(1) input:checked)
+        .tab-content:nth-of-type(1) {
+        display: block;
+      }
+      .tab-container:has(label:nth-of-type(2) input:checked)
+        .tab-content:nth-of-type(2) {
+        display: block;
+      }
+      .tab-container:has(label:nth-of-type(3) input:checked)
+        .tab-content:nth-of-type(3) {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Slide Tab - CSS Only</h1>
+    <div class="tab-container">
+      <div class="tabs">
+        <label>
+          <span>Overview</span>
+          <input type="radio" name="tab" checked />
+        </label>
+        <label>
+          <span>Experience</span>
+          <input type="radio" name="tab" />
+        </label>
+        <label>
+          <span>Awards</span>
+          <input type="radio" name="tab" />
+        </label>
+      </div>
+      <div class="tab-contents">
+        <div class="tab-content">
+          <h2>Overview</h2>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores
+            magni quidem aspernatur facilis ab suscipit neque voluptates, at
+            earum ipsum libero unde excepturi repellendus quod, eligendi
+            consequuntur quis quae praesentium quo vitae. Id voluptatibus sunt
+            quod animi accusamus, excepturi a nisi consequuntur incidunt fugit
+            illo, natus mollitia facilis alias distinctio!
+          </p>
+        </div>
+        <div class="tab-content">
+          <h2>Experience</h2>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo
+            voluptas aliquid animi, quia iste quas nesciunt veniam ad sint ipsam
+            amet! Delectus facilis dolore voluptatibus modi nihil quae sequi
+            impedit!
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi
+            molestiae non explicabo sapiente, dolorum omnis quas optio
+            repudiandae placeat consequatur!
+          </p>
+        </div>
+        <div class="tab-content">
+          <h2>Awards</h2>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam
+            sapiente iusto temporibus doloremque, perferendis unde. Molestiae
+            pariatur earum voluptatibus ut animi, dicta eligendi ad accusantium,
+            est modi vero hic. Beatae autem corrupti, iure veritatis laudantium
+            voluptate quae totam repellat incidunt?
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

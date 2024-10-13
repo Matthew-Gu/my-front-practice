@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
+      header,
+      footer {
+        width: 100%;
+        height: 100vh;
+        display: grid;
+        place-items: center;
+      }
+
+      h1 {
+        font-size: 6rem;
+        text-transform: uppercase;
+      }
+
+      main {
+        background: #010101;
+        width: 100%;
+        height: 300vh;
+      }
+
+      .animation-container {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .list {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        width: 75%;
+      }
+
+      .list-item {
+        --n: 7;
+        --w: 6vw;
+        --gap: calc((100% - var(--w) * var(--n)) / var(--n) / 2);
+        width: var(--w);
+        aspect-ratio: 1;
+        margin: 1vw var(--gap);
+        border-radius: 1vw;
+      }
+
+      .list-item:nth-child(n) {
+        background-color: blue;
+      }
+
+      .list-item:nth-child(2n) {
+        background-color: green;
+      }
+
+      .list-item:nth-child(3n) {
+        background-color: chocolate;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>header</h1>
+    </header>
+    <main>
+      <div class="animation-container">
+        <div class="list">
+          <div data-order="0" class="list-item"></div>
+          <div data-order="1" class="list-item"></div>
+          <div data-order="2" class="list-item"></div>
+          <div data-order="3" class="list-item"></div>
+          <div data-order="2" class="list-item"></div>
+          <div data-order="1" class="list-item"></div>
+          <div data-order="0" class="list-item"></div>
+          <div data-order="0" class="list-item"></div>
+          <div data-order="1" class="list-item"></div>
+          <div data-order="2" class="list-item"></div>
+          <div data-order="3" class="list-item"></div>
+          <div data-order="2" class="list-item"></div>
+          <div data-order="1" class="list-item"></div>
+          <div data-order="0" class="list-item"></div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <h1>footer</h1>
+    </footer>
+  </body>
+  <script>
+    const items = document.querySelectorAll('.list-item');
+    const playground = document.querySelector('main');
+    const list = document.querySelector('.list');
+
+    function createAnimation(scrollStart, scrollEnd, valueStart, valueEnd) {
+      return function (scroll) {
+        if (scroll <= scrollStart) {
+          return valueStart;
+        }
+        if (scroll >= scrollEnd) {
+          return valueEnd;
+        }
+        return (
+          valueStart +
+          (valueEnd - valueStart) *
+            ((scroll - scrollStart) / (scrollEnd - scrollStart))
+        );
+      };
+    }
+
+    const animationMap = new Map();
+
+    function getDomAnimation(scrollStart, scrollEnd, dom) {
+      const delay = (scrollEnd - scrollStart) / items.length;
+      scrollStart = scrollStart + dom.dataset.order * delay;
+
+      const opacityAnimation = createAnimation(scrollStart, scrollEnd, 0, 1);
+      const opacity = (scroll) => {
+        return opacityAnimation(scroll);
+      };
+
+      const scaleAnimation = createAnimation(scrollStart, scrollEnd, 0.5, 1);
+      const xAnimation = createAnimation(
+        scrollStart,
+        scrollEnd,
+        list.clientWidth / 2 - dom.offsetLeft - dom.clientWidth / 2,
+        0
+      );
+      const yAnimation = createAnimation(
+        scrollStart,
+        scrollEnd,
+        list.clientHeight / 2 - dom.offsetTop - dom.clientHeight / 2,
+        0
+      );
+      const transform = (scroll) => {
+        return `
+        translate(${xAnimation(scroll)}px, ${yAnimation(scroll)}px)
+        scale(${scaleAnimation(scroll)})`;
+      };
+
+      return {
+        opacity,
+        transform,
+      };
+    }
+
+    function updateMap() {
+      animationMap.clear();
+      const playgroundRect = playground.getBoundingClientRect();
+      const scrollStart = playgroundRect.top + window.scrollY;
+      const scrollEnd =
+        playgroundRect.bottom + window.screenY - window.innerHeight;
+
+      for (const item of items) {
+        animationMap.set(item, getDomAnimation(scrollStart, scrollEnd, item));
+      }
+    }
+    updateMap();
+
+    function updateStyles() {
+      const scroll = window.scrollY;
+      for (let [dom, value] of animationMap) {
+        for (const cssprop in value) {
+          dom.style[cssprop] = value[cssprop](scroll);
+        }
+      }
+    }
+
+    updateStyles();
+    window.addEventListener('scroll', updateStyles);
+  </script>
+</html>

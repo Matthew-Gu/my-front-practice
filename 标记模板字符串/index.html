@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script>
+    const user = {
+      name: 'John',
+      age: 30,
+    };
+
+    const test = tag`my name is ${user.name} and i am ${user.age} years old`;
+
+    function tag() {
+      console.log(arguments);
+    }
+
+    function generateString(strings, ...values) {
+      return strings.reduce((result, string, i) => result + string + (values[i] || ''), '');
+    }
+
+    HTMLElement.prototype.styles = function (strings, ...values) {
+      const styles = generateString(strings, ...values);
+      const styleObject = styles.split(';').reduce((acc, style) => {
+        let [key, value] = style.split(':');
+        if (key && value) {
+          acc[key.trim()] = value.trim();
+        }
+        return acc;
+      }, {});
+      Object.assign(this.style, styleObject);
+      return this;
+    };
+
+    HTMLElement.prototype.props = function (strings, ...values) {
+      const props = generateString(strings, ...values);
+      const propObject = {};
+      const regex = /([^:;]+):([^;]+)/g;
+      let match;
+      while ((match = regex.exec(props)) !== null) {
+        propObject[match[1].trim()] = match[2].trim();
+      }
+      for (let key in propObject) {
+        this.setAttribute(key, propObject[key]);
+      }
+      return this;
+    };
+
+    HTMLElement.prototype.content = function (strings, ...values) {
+      const content = generateString(strings, ...values);
+      this.innerHTML = content;
+      return this;
+    };
+
+    // 使用示例
+    const a = document.createElement('a');
+
+    a.styles`
+      color: red;
+      font-size: 60px;
+    `.props`
+      href: http://www.baidu.com;
+      target: _blank;
+      title: to baidu
+    `.content`点击跳转到百度`;
+
+    document.body.appendChild(a);
+  </script>
+</html>
